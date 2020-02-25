@@ -13,14 +13,21 @@ The original paper and code for "Decoupled smoothings on graphs" can be found he
 
 Probabilistic Soft Logic is a machine learning framework for developing probabilistic models. You can find more information about PSL available at the [PSL homepage](https://psl.linqs.org/). 
 
-### Documentation
+## Documentation
 
 This repository contains code to run PSL rules for one hop (homophily) and two hop (monophily) methods to predict genders in a social network. 
 We provide links to the datasets (Facebook100) in the data sub-folder.
 
-
-### Reproducing results and figures
+### Obtaining the data
 
 This repository set-up assumes that the FB100 (raw `.mat` files) have been acquired and are saved the data folder. Follow these steps:
 1. The Facebook100 (FB100) dataset is publicly available from the Internet Archive at https://archive.org/details/oxford-2005-facebook-matrix and other public repositories. Download the datasets.
 2. Save raw datasets in placeholder folder data. They should be in the following form: `Amherst41.mat`.
+
+### Reproducing results
+
+To reproduce the results for one hop or two hop, go to their coresponding folders and run the contained bash script.
+
+* /cli_one_hop - includes PSL rules for homophily
+* /cli_two_hop - includes PSL rules for monophily
+* /cli_decoupled_smoothing - *TODO*
