@@ -1,0 +1,13 @@
+predicates:
+   Edge/2: closed
+   Gender/1: open
+
+observations:
+   Edge: ../data/edges.txt
+   Gender: ../data/gender_0.1_obs.txt
+
+targets:
+    Gender: ../data/gender_0.1_targets.txt
+
+truth:
+    Gender: ../data/gender_truth.txt
