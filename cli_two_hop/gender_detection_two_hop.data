@@ -1,6 +1,6 @@
 predicates:
    Edge/2: closed
-   Gender/1: open
+   Gender/2: open
 
 observations:
    Edge: ../data/edges.txt

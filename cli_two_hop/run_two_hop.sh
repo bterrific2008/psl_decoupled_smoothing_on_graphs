@@ -2,7 +2,7 @@
 
 # Options can also be passed on the command line.
 # These options are blind-passed to the CLI.
-# Ex: ./run_one_hop.sh -D log4j.threshold=DEBUG
+# Ex: ./run_two_hop.sh -D log4j.threshold=DEBUG
 
 readonly PSL_VERSION='CANARY-2.2.3'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"

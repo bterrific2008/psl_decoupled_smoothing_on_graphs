@@ -1,7 +1,15 @@
 // People With the Same Edge are more likely to share a gender
-1: Edge(A, B) & Edge(B, C) & Gender(A) -> Gender(C)
+1: Edge(A, B) & Edge(B, C) & Gender(A, G) -> Gender(C, G)
 
-Edge(A, B) = Edge(B, A) .
+Gender(P, +G) = 1 .
+
+// If reversed edges are observed, then there's no need for this predicate
+// Edge(A, B) = Edge(B, A) .
+
+// uniform prior, keeps it in the middle between both values
+1: Gender(P) = 0.5 ^2
+
+// negative prior, make no initial assumptions
+// 1: Gender(P, G) = 0.0 ^2
 
 5: !Edge(A, B) ^2
-
