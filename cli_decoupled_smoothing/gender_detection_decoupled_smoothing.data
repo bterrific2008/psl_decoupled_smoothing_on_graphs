@@ -1,5 +1,6 @@
 predicates:
    Edge/2: closed
+   Preferences/2: open
    Gender/2: open
 
 observations:
@@ -7,6 +8,7 @@ observations:
    Gender: ../data/gender_0.1_obs.txt
 
 targets:
+    Preferences: ../data/preference_target.txt
     Gender: ../data/gender_0.1_targets.txt
 
 truth:
