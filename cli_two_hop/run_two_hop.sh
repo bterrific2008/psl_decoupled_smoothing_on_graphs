@@ -4,7 +4,7 @@
 # These options are blind-passed to the CLI.
 # Ex: ./run_one_hop.sh -D log4j.threshold=DEBUG
 
-readonly PSL_VERSION='CANARY-2.2.3'
+readonly PSL_VERSION='2.2.1'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
 readonly BASE_NAME='gender_detection_two_hop'
 
