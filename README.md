@@ -30,4 +30,18 @@ To reproduce the results for one hop or two hop, go to their coresponding folder
 
 * /cli_one_hop - includes PSL rules for homophily
 * /cli_two_hop - includes PSL rules for monophily
-* /cli_decoupled_smoothing - *TODO*
+* /cli_decoupled_smoothing - completed
+
+### To Do
+
+* Change project file structure
+    * pad numbers in the file repo
+* add an option to data writer that specifies:
+    * random seed
+    * % labeled/unlabeled
+    * raw data used
+    * timestamp
+* should be able to reproduce data
+* consider one_hop implementation for decoupled smoothing
+* experiment with partial/fully function constraint for decoupled
+* set preference prior to be .5 
