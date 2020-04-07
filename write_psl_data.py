@@ -82,7 +82,7 @@ def write_files(adj_matrix, gender_unknown, gender_y, random_seed=1, percent_lab
         for edge in edges:
             f.write('{0[0]}\t{0[1]}\t1.0\n'.format(edge))
 
-    gender_truth_file = data_cwd + '\\gender_truth'
+    gender_truth_file = data_cwd + '\\gender_truth.txt'
     gender_obs_file = data_cwd + '\\gender_obs.txt'
     gender_targets_file = data_cwd + '\\gender_targets.txt'
 

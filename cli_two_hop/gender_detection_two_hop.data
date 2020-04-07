@@ -3,11 +3,11 @@ predicates:
    Gender/2: open
 
 observations:
-   Edge: ../data/edges.txt
-   Gender: ../data/gender_0.1_obs.txt
+   Edge: ../data/Amherst41/01/edges.txt
+   Gender: ../data/Amherst41/01/gender_obs.txt
 
 targets:
-    Gender: ../data/gender_0.1_targets.txt
+    Gender: ../data/Amherst41/01/gender_targets.txt
 
 truth:
-    Gender: ../data/gender_truth.txt
+    Gender: ../data/Amherst41/01/gender_truth.txt
