@@ -5,4 +5,4 @@
 Gender(P, +G) = 1 .
 
 // negative prior, make no initial assumptions
-1: !Gender(A, G) ^ 2
+1: !Gender(A, G) ^2
