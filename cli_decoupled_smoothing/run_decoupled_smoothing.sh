@@ -4,11 +4,11 @@
 # These options are blind-passed to the CLI.
 # Ex: ./run_decoupled_smoothing.sh -D log4j.threshold=DEBUG
 
-readonly PSL_VERSION='CANARY-2.2.3'
+readonly PSL_VERSION='CANARY-2.3.0'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
 readonly BASE_NAME='gender_detection_decoupled_smoothing'
 
-readonly ADDITIONAL_PSL_OPTIONS='--int-ids -D random.seed=12345'
+readonly ADDITIONAL_PSL_OPTIONS='--int-ids -D random.seed=12345 -D log4j.threshold=debug'
 readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval CategoricalEvaluator RankingEvaluator'
 
 function main() {

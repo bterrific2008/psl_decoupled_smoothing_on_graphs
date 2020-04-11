@@ -34,13 +34,13 @@ To reproduce the results for one hop or two hop, go to their coresponding folder
 
 ### To Do
 
-* Change project file structure
-    * pad numbers in the file repo
-* add an option to data writer that specifies:
-    * random seed
-    * % labeled/unlabeled
-    * raw data used
-    * timestamp
+* ~~Change project file structure~~
+    * ~~pad numbers in the file repo~~
+* ~~add an option to data writer that specifies:~~
+    * ~~random seed~~
+    * ~~% labeled/unlabeled~~
+    * ~~raw data used~~
+    * ~~timestamp~~
 * should be able to reproduce data
 * consider one_hop implementation for decoupled smoothing
 * experiment with partial/fully function constraint for decoupled

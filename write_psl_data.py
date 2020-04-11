@@ -88,10 +88,6 @@ def write_files(adj_matrix, gender_unknown, gender_y, random_seed=1, percent_lab
 
     with open(gender_obs_file, 'w+') as f_obs, open(gender_targets_file, 'w+') as f_target, open(
             gender_truth_file, 'w+') as f_truth:
-        gender2 = gender_y.copy()
-
-        # some genders are just unknown by the base data
-        # we set these to be targets as well
 
         gender2 = gender_y.copy()
         random.shuffle(gender2)
