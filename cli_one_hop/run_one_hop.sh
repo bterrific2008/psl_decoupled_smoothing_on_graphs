@@ -2,14 +2,14 @@
 
 # Options can also be passed on the command line.
 # These options are blind-passed to the CLI.
-# Ex: ./run_one_hop.sh -D log4j.threshold=DEBUG
+# Ex: ./run_one_hot.sh -D log4j.threshold=DEBUG
 
-readonly PSL_VERSION='CANARY-2.2.3'
+readonly PSL_VERSION='CANARY-2.3.0'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
 readonly BASE_NAME='gender_detection_one_hop'
 
-readonly ADDITIONAL_PSL_OPTIONS='--int-ids -D admmreasoner.objectivebreak=false -D admmreasoner.stepsize=0.1 -D random.seed=12345'
-readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval ContinuousEvaluator'
+readonly ADDITIONAL_PSL_OPTIONS='--int-ids -D random.seed=12345 -D log4j.threshold=debug'
+readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval CategoricalEvaluator RankingEvaluator'
 
 function main() {
   trap exit SIGINT
