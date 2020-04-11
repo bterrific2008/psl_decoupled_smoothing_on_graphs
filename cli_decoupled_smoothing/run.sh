@@ -2,11 +2,11 @@
 
 # Options can also be passed on the command line.
 # These options are blind-passed to the CLI.
-# Ex: ./run_two_hop.sh -D log4j.threshold=DEBUG
+# Ex: ./run.sh -D log4j.threshold=DEBUG
 
 readonly PSL_VERSION='CANARY-2.3.0'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
-readonly BASE_NAME='gender_detection_two_hop'
+readonly BASE_NAME='gender'
 
 readonly ADDITIONAL_PSL_OPTIONS='--int-ids -D random.seed=12345 -D log4j.threshold=debug'
 readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval CategoricalEvaluator RankingEvaluator'
