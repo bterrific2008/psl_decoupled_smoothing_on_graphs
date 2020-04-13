@@ -2,6 +2,7 @@ import argparse
 import datetime
 import os
 import random
+import json
 from pathlib import Path
 
 import parsing as parse_mat
@@ -24,6 +25,12 @@ def parse_data(school_data='Amherst41.mat'):
     # set the working directory and import helper functions
     # get the current working directory and then redirect into the functions under code
     cwd = os.getcwd()
+
+    params = {}
+    params['timestamp'] = datetime.datetime.now()
+    params['data'] = data_name
+    params['% labeled'] = percent_labeled
+    params['random seed'] = random_seed
 
     # import the data from the data folder
     data_cwd = '{0}/{1}'.format(os.path.abspath(cwd), 'data')
@@ -109,12 +116,9 @@ def write_files(adj_matrix, gender_unknown, gender_y, random_seed=1, percent_lab
             f_target.write('{0}\t1\n'.format(gender_i))
             f_target.write('{0}\t2\n'.format(gender_i))
 
-    data_log = data_cwd + '/data_log.txt'
+    data_log = data_cwd + '/data_log.json'
     with open(data_log, 'w+') as f:
-        f.write('Timestamp\t{}\n'.format(datetime.datetime.now()))
-        f.write('Data used\t{}\n'.format(data_name))
-        f.write('% Labeled\t{}\n'.format(percent_labeled))
-        f.write('Random Seed\t{}\n'.format(random_seed))
+        json.dump(params, f)
 
 
 cli_parse = argparse.ArgumentParser()
