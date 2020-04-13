@@ -82,7 +82,7 @@ def write_files(adj_matrix, gender_unknown, gender_y, random_seed=1, percent_lab
     edges_file = data_cwd + '/edges_obs'
     with open(edges_file + '.txt', 'w+') as f:
         for edge in edges:
-            f.write('{0[0]}\t{0[1]}\t1.0\n'.format(edge))
+            f.write('{0[0]}\t{0[1]}\n'.format(edge))
 
     gender_truth_file = data_cwd + '/gender_truth.txt'
     gender_obs_file = data_cwd + '/gender_obs.txt'

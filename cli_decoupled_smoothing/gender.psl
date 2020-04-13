@@ -10,7 +10,7 @@ Gender(P, +G) = 1 .
 Preference(P, +G) <= 1 .
 
 // Set preference prior to .5
-1: Preference(P, G) = 0.5 ^2
+// 1: Preference(P, G) = 0.5 ^2
 
 // negative priors
 1: !Gender(A, G) ^2
