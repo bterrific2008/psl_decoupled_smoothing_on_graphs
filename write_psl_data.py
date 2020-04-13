@@ -26,12 +26,6 @@ def parse_data(school_data='Amherst41.mat'):
     # get the current working directory and then redirect into the functions under code
     cwd = os.getcwd()
 
-    params = {}
-    params['timestamp'] = datetime.datetime.now()
-    params['data'] = data_name
-    params['% labeled'] = percent_labeled
-    params['random seed'] = random_seed
-
     # import the data from the data folder
     data_cwd = '{0}/{1}'.format(os.path.abspath(cwd), 'data')
     fb100_file = '{0}/{1}'.format(data_cwd, school_data)
@@ -54,6 +48,13 @@ def parse_data(school_data='Amherst41.mat'):
 
 def write_files(adj_matrix, gender_unknown, gender_y, random_seed=1, percent_labeled=0.01,
                 data_name='Amherst41'):
+
+    # set up parameters
+    params = {}
+    params['timestamp'] = datetime.datetime.now()
+    params['data'] = data_name
+    params['% labeled'] = percent_labeled
+    params['random seed'] = random_seed
 
     # set the working directory and import helper functions
     # get the current working directory and then redirect into the functions under code
