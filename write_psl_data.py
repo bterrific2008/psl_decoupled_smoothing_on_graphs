@@ -43,7 +43,7 @@ def parse_data(school_data='Amherst41.mat'):
     # get the corresponding gender for each node in a disctionary form
     gender_dict = create_dict(range(len(gender_y_tmp)), gender_y_tmp)
 
-    (graph, gender_y) = parse_mat.create_graph(adj_matrix_tmp, gender_dict, 'gender', 0, None, 'yes')
+    (graph, gender_y_tmp) = parse_mat.create_graph(adj_matrix_tmp, gender_dict, 'gender', 0, None, 'yes')
 
     adj_matrix = nx.adjacency_matrix(graph).todense().tolist()
 
@@ -52,14 +52,11 @@ def parse_data(school_data='Amherst41.mat'):
     # get the gender for each node (1/2, 0 for missing)
     # gender_y_tmp = metadata[:, 1]
     # gender_unknown = []
-    # gender_y = []
-    # for i, y in enumerate(gender_y_tmp):
-    #     if y > 0:
-    #         gender_y.append((i, y))
-    #     else:
-    #         gender_unknown.append(i)
+    gender_y = []
+    for i, y in enumerate(gender_y_tmp):
+        gender_y.append((i, y))
 
-    return adj_matrix, gender_y.tolist()
+    return adj_matrix, gender_y
 
 
 def write_files(adj_matrix, gender_y, random_seed=1, percent_labeled=0.01,
@@ -112,19 +109,24 @@ def write_files(adj_matrix, gender_y, random_seed=1, percent_labeled=0.01,
     gender_truth_file = data_cwd + '/gender_truth.txt'
     gender_obs_file = data_cwd + '/gender_obs.txt'
     gender_targets_file = data_cwd + '/gender_targets.txt'
+    gender_train_indicies = data_cwd + '/gender_train_indicies.txt'
+    gender_test_indicies = data_cwd + '/gender_test_indicies.txt'
 
+    gender2 = gender_y.copy()
+    random.shuffle(gender2)
+    split = int(len(gender2) * percent_labeled)
     with open(gender_obs_file, 'w+') as f_obs, open(gender_targets_file, 'w+') as f_target, open(
-            gender_truth_file, 'w+') as f_truth:
+            gender_truth_file, 'w+') as f_truth, open(gender_test_indicies, 'w+') as f_test_index,\
+            open(gender_train_indicies, 'w+') as f_train_index:
 
-        gender2 = gender_y.copy()
-        random.shuffle(gender2)
-        split = int(len(gender2) * percent_labeled)
-        for gender_i, gender in enumerate(gender2[:split]):
+        for gender_i, gender in (gender2[:split]):
             if gender > 0:
+                f_train_index.write('{}\n'.format(gender_i))
                 f_obs.write('{0}\t{1}\t{2}\n'.format(gender_i, 1, float(gender == 1)))
                 f_obs.write('{0}\t{1}\t{2}\n'.format(gender_i, 2, float(gender == 2)))
-        for gender_i, gender in enumerate(gender2[split:]):
+        for gender_i, gender in (gender2[split:]):
             if gender > 0:
+                f_test_index.write('{}\n'.format(gender_i))
                 f_target.write('{0}\t1\n'.format(gender_i))
                 f_target.write('{0}\t2\n'.format(gender_i))
                 f_truth.write('{0}\t{1}\t{2}\n'.format(gender_i, 1, float(gender == 1)))
