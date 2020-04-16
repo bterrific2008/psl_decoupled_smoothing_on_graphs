@@ -86,7 +86,7 @@ def write_files(adj_matrix, gender_y, random_seed=1, percent_labeled=0.01,
 
     # new directory for random split
     data_cwd = '{0}/{1:04d}rand'.format(data_cwd,
-                                    random_seed)  # TO-DO fix random seed size to 4 digits, append rand instead of preprending it
+                                    int(random_seed))  # TO-DO fix random seed size to 4 digits, append rand instead of preprending it
     Path(data_cwd).mkdir(parents=True, exist_ok=True)  # if directory doesn't exist, create it
 
     # collect the edges
