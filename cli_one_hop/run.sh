@@ -6,7 +6,7 @@
 
 readonly PSL_VERSION='CANARY-2.3.0'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
-readonly BASE_NAME='gender_detection_one_hop'
+readonly BASE_NAME='gender'
 
 readonly ADDITIONAL_PSL_OPTIONS='--int-ids -D random.seed=12345 -D log4j.threshold=debug'
 readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval CategoricalEvaluator RankingEvaluator'
