@@ -3,6 +3,7 @@ import datetime
 import os
 import random
 import json
+import networkx as nx
 from pathlib import Path
 
 import parsing as parse_mat
@@ -13,11 +14,11 @@ def generate_data(random_seed=1, school_data='Amherst41.mat'):
     random.seed(random_seed)
 
     # parse the data
-    adj_matrix, gender_unknown, gender_y = parse_data(school_data)
+    adj_matrix, gender_y = parse_data(school_data)
 
     # write the data
     for pct_label in [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99]:
-        write_files(adj_matrix, gender_unknown, gender_y, random_seed, pct_label,
+        write_files(adj_matrix, gender_y, random_seed, pct_label,
                     school_data)
 
 
@@ -31,27 +32,42 @@ def parse_data(school_data='Amherst41.mat'):
     fb100_file = '{0}/{1}'.format(data_cwd, school_data)
     A, metadata = parse_mat.parse_fb100_mat_file(fb100_file)
 
+    ## function to create + save dictionary of features
+    def create_dict(key, obj):
+        return (dict([(key[i], obj[i]) for i in range(len(key))]))
+
     # change A(scipy csc matrix) into a numpy matrix
-    adj_matrix = A.todense().tolist()
-    # get the gender for each node (1/2, 0 for missing)
+    adj_matrix_tmp = A.todense()
+    # get the gender for each node(1/2,0 for missing)
     gender_y_tmp = metadata[:, 1]
-    gender_unknown = []
-    gender_y = []
-    for i, y in enumerate(gender_y_tmp):
-        if y > 0:
-            gender_y.append((i, y))
-        else:
-            gender_unknown.append(i)
+    # get the corresponding gender for each node in a disctionary form
+    gender_dict = create_dict(range(len(gender_y_tmp)), gender_y_tmp)
 
-    return adj_matrix, gender_unknown, gender_y
+    (graph, gender_y) = parse_mat.create_graph(adj_matrix_tmp, gender_dict, 'gender', 0, None, 'yes')
+
+    adj_matrix = nx.adjacency_matrix(graph).todense().tolist()
+
+    # change A(scipy csc matrix) into a numpy matrix
+    # adj_matrix = A.todense().tolist()
+    # get the gender for each node (1/2, 0 for missing)
+    # gender_y_tmp = metadata[:, 1]
+    # gender_unknown = []
+    # gender_y = []
+    # for i, y in enumerate(gender_y_tmp):
+    #     if y > 0:
+    #         gender_y.append((i, y))
+    #     else:
+    #         gender_unknown.append(i)
+
+    return adj_matrix, gender_y.tolist()
 
 
-def write_files(adj_matrix, gender_unknown, gender_y, random_seed=1, percent_labeled=0.01,
+def write_files(adj_matrix, gender_y, random_seed=1, percent_labeled=0.01,
                 data_name='Amherst41'):
 
     # set up parameters
     params = {}
-    params['timestamp'] = datetime.datetime.now()
+    params['timestamp'] = str(datetime.datetime.now())
     params['data'] = data_name
     params['% labeled'] = percent_labeled
     params['random seed'] = random_seed
@@ -67,12 +83,13 @@ def write_files(adj_matrix, gender_unknown, gender_y, random_seed=1, percent_lab
     data_cwd = '{0}/{1}'.format(data_cwd, data_name.split('.')[0])
     Path(data_cwd).mkdir(parents=True, exist_ok=True)  # if directory doesn't exist, create it
 
-    # new directory for random split
-    data_cwd = '{0}/rand{1}'.format(data_cwd, random_seed)
-    Path(data_cwd).mkdir(parents=True, exist_ok=True)  # if directory doesn't exist, create it
-
     # new directory for % labeled
     data_cwd = '{0}/{1:02d}pct'.format(data_cwd, int(percent_labeled * 100))
+    Path(data_cwd).mkdir(parents=True, exist_ok=True)  # if directory doesn't exist, create it
+
+    # new directory for random split
+    data_cwd = '{0}/{1:04d}rand'.format(data_cwd,
+                                    random_seed)  # TO-DO fix random seed size to 4 digits, append rand instead of preprending it
     Path(data_cwd).mkdir(parents=True, exist_ok=True)  # if directory doesn't exist, create it
 
     # collect the edges
@@ -102,20 +119,20 @@ def write_files(adj_matrix, gender_unknown, gender_y, random_seed=1, percent_lab
         gender2 = gender_y.copy()
         random.shuffle(gender2)
         split = int(len(gender2) * percent_labeled)
-        for gender_i, gender in gender2[:split]:
+        for gender_i, gender in enumerate(gender2[:split]):
             if gender > 0:
                 f_obs.write('{0}\t{1}\t{2}\n'.format(gender_i, 1, float(gender == 1)))
                 f_obs.write('{0}\t{1}\t{2}\n'.format(gender_i, 2, float(gender == 2)))
-        for gender_i, gender in gender2[split:]:
+        for gender_i, gender in enumerate(gender2[split:]):
             if gender > 0:
                 f_target.write('{0}\t1\n'.format(gender_i))
                 f_target.write('{0}\t2\n'.format(gender_i))
                 f_truth.write('{0}\t{1}\t{2}\n'.format(gender_i, 1, float(gender == 1)))
                 f_truth.write('{0}\t{1}\t{2}\n'.format(gender_i, 2, float(gender == 2)))
 
-        for gender_i in gender_unknown:
-            f_target.write('{0}\t1\n'.format(gender_i))
-            f_target.write('{0}\t2\n'.format(gender_i))
+        # for gender_i in gender_unknown:
+        #     f_target.write('{0}\t1\n'.format(gender_i))
+        #     f_target.write('{0}\t2\n'.format(gender_i))
 
     data_log = data_cwd + '/data_log.json'
     with open(data_log, 'w+') as f:
