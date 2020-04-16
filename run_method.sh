@@ -4,7 +4,7 @@
 readonly THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly BASE_OUT_DIR="${THIS_DIR}/results"
 
-readonly ADDITIONAL_PSL_OPTIONS='-D log4j.threshold=DEBUG'
+readonly ADDITIONAL_PSL_OPTIONS='-D log4j.threshold=TRACE'
 
 # An identifier to differentiate the output of this script/experiment from other scripts.
 readonly RUN_ID='decoupled-smoothing'
@@ -32,14 +32,14 @@ function run_psl() {
         cd "${cliDir}"
 
         # fix the data settings
-        sed "s/rand_sd/rand${rand_sd}/g ; s/pct_lbl/${pct_lbl}pct/g ; s/data_nm/${data_nm}/g" \
+        sed "s/rand_sd/${rand_sd}rand/g ; s/pct_lbl/${pct_lbl}pct/g ; s/data_nm/${data_nm}/g" \
         base.data > gender.data
 
         # Run PSL.
         /usr/bin/time -v --output="${timePath}" ./run.sh ${extraOptions} > "${outPath}" 2> "${errPath}"
 
         # Copy any artifacts into the output directory.
-        cp -r inferred-predicates "${outDir}/"
+        cp -R inferred-predicates "${outDir}/inferred-predicates{pct_lbl}"
         cp *.data "${outDir}/"
         cp *.psl "${outDir}/"
     popd > /dev/null
@@ -71,13 +71,16 @@ function main() {
     local data_nm=$1
     shift
 
-    local rand_sd=$1
+    local rand_sd=$(printf "%04d" $1)
     shift
 
+    # TODO make this work with floating point numbers
     local pct_lbl=$1
     shift
 
     trap exit SIGINT
+
+    echo "data used: ${data_nm} | random seed: ${rand_sd} | percent labeled:${pct_lbl}"
 
     for exampleDir in "$@"; do
         run_method "${exampleDir}" "${data_nm}" "${rand_sd}" "${pct_lbl}" "${i}"
