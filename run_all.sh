@@ -30,10 +30,8 @@ function main() {
 
     echo "Running ${method} for all percentages"
 
-    ./run_method.sh "${data_name}" "${random_seed}" "01" "${method_dir}"
-
     for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
-      run_method "${data_name}" "${random_seed}" "${pct_lbl}" "${method}"
+      ./run_method.sh "${data_name}" "${random_seed}" "${pct_lbl}" "${method}"
     done
 
 }
