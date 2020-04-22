@@ -2,13 +2,14 @@
 
 # Options can also be passed on the command line.
 # These options are blind-passed to the CLI.
-# Ex: ./run_one_hot.sh -D log4j.threshold=DEBUG
+# Ex: ./run.sh -D log4j.threshold=DEBUG
 
 readonly PSL_VERSION='CANARY-2.3.0'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
 readonly BASE_NAME='gender'
 
 readonly ADDITIONAL_PSL_OPTIONS='--int-ids -D random.seed=12345 -D log4j.threshold=debug'
+readonly ADDITIONAL_LEARN_OPTIONS='--learn'
 readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval CategoricalEvaluator RankingEvaluator'
 
 function main() {
@@ -19,17 +20,28 @@ function main() {
   fetch_psl
 
   # Run PSL
-  run_evaluation "$@"
+  runWeightLearning "$@"
+  runEvaluation "$@"
 }
 
-function run_evaluation() {
-  echo "Running PSL Inference"
+function runWeightLearning() {
+   echo "Running PSL Weight Learning"
 
-  java -jar "${JAR_PATH}" --model "${BASE_NAME}.psl" --data "${BASE_NAME}.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
-  if [[ "$?" -ne 0 ]]; then
-    echo 'ERROR: Failed to run infernce'
-    exit 70
-  fi
+   java -jar "${JAR_PATH}" --model "${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" ${ADDITIONAL_LEARN_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+   if [[ "$?" -ne 0 ]]; then
+      echo 'ERROR: Failed to run weight learning'
+      exit 60
+   fi
+}
+
+function runEvaluation() {
+   echo "Running PSL Inference"
+
+   java -jar "${JAR_PATH}" --model "${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+   if [[ "$?" -ne 0 ]]; then
+      echo 'ERROR: Failed to run infernce'
+      exit 70
+   fi
 }
 
 function check_requirements() {
