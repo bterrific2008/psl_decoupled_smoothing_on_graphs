@@ -39,7 +39,7 @@ function run_psl() {
         /usr/bin/time -v --output="${timePath}" ./run.sh ${extraOptions} > "${outPath}" 2> "${errPath}"
 
         # Copy any artifacts into the output directory.
-        cp -R inferred-predicates "${outDir}/inferred-predicates{pct_lbl}"
+        cp -R inferred-predicates "${outDir}/inferred-predicates${pct_lbl}"
         cp *.data "${outDir}/"
         cp *.psl "${outDir}/"
     popd > /dev/null

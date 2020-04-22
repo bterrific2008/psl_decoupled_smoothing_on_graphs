@@ -4,12 +4,12 @@ predicates:
    Gender/2: open
 
 observations:
-   Edge: ../data/data_nm/rand_sd/pct_lbl/edges_obs.txt
-   Gender: ../data/data_nm/rand_sd/pct_lbl/gender_obs.txt
+   Edge: ../data/data_nm/pct_lbl/rand_sd/edges_obs.txt
+   Gender: ../data/data_nm/pct_lbl/rand_sd/gender_obs.txt
 
 targets:
-    Preference: ../data/data_nm/rand_sd/pct_lbl/preferences_targets.txt
-    Gender: ../data/data_nm/rand_sd/pct_lbl/gender_targets.txt
+    Preference: ../data/data_nm/pct_lbl/rand_sd/preferences_targets.txt
+    Gender: ../data/data_nm/pct_lbl/rand_sd/gender_targets.txt
 
 truth:
-    Gender: ../data/data_nm/rand_sd/pct_lbl/gender_truth.txt
+    Gender: ../data/data_nm/pct_lbl/rand_sd/gender_truth.txt
