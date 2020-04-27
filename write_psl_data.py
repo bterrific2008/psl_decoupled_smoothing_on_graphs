@@ -9,7 +9,7 @@ from pathlib import Path
 import parsing as parse_mat
 
 
-def generate_data(random_seed=1, school_data='Amherst41.mat'):
+def generate_data(random_seed=1, school_data='Amherst41.mat', learn=False):
     # fix random
     random.seed(random_seed)
 
@@ -18,8 +18,11 @@ def generate_data(random_seed=1, school_data='Amherst41.mat'):
 
     # write the data
     for pct_label in [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99]:
+        print('Creating data for {} at {}% labeled for {} with random seed'.format(school_data, pct_label,
+                                                                  "learning" if learn
+                                                                  else "evaluation", random_seed))
         write_files(adj_matrix, gender_y, random_seed, pct_label,
-                    school_data)
+                    school_data, learn)
 
 
 def parse_data(school_data='Amherst41.mat'):
@@ -60,7 +63,7 @@ def parse_data(school_data='Amherst41.mat'):
 
 
 def write_files(adj_matrix, gender_y, random_seed=1, percent_labeled=0.01,
-                data_name='Amherst41'):
+                data_name='Amherst41', learn=False):
 
     # set up parameters
     params = {}
@@ -75,6 +78,14 @@ def write_files(adj_matrix, gender_y, random_seed=1, percent_labeled=0.01,
 
     # import the data from the data folder
     data_cwd = '{0}/{1}'.format(os.path.abspath(cwd), 'data')
+
+    # set up a folder to hold our indicies (to use for the baseline model)
+    indicies_cwd = '{0}/{1}'.format(os.path.abspath(cwd), 'index')
+    Path(indicies_cwd).mkdir(parents=True, exist_ok=True)  # if directory doesn't exist, create it
+
+    # new directory for learn/eval
+    data_cwd = '{0}/{1}'.format(data_cwd, "learn" if learn else "eval")
+    Path(data_cwd).mkdir(parents=True, exist_ok=True)  # if directory doesn't exist, create it
 
     # new directory for school
     data_cwd = '{0}/{1}'.format(data_cwd, data_name.split('.')[0])
@@ -109,8 +120,8 @@ def write_files(adj_matrix, gender_y, random_seed=1, percent_labeled=0.01,
     gender_truth_file = data_cwd + '/gender_truth.txt'
     gender_obs_file = data_cwd + '/gender_obs.txt'
     gender_targets_file = data_cwd + '/gender_targets.txt'
-    gender_train_indicies = data_cwd + '/gender_train_indicies.txt'
-    gender_test_indicies = data_cwd + '/gender_test_indicies.txt'
+    gender_train_indicies = indicies_cwd + '/gender_train_indicies_{}rand_{}pct.txt'.format(random_seed, percent_labeled)
+    gender_test_indicies = indicies_cwd + '/gender_test_indicies_{}rand_{}pct.txt'.format(random_seed, percent_labeled)
 
     gender2 = gender_y.copy()
     random.shuffle(gender2)
@@ -145,10 +156,12 @@ cli_parse = argparse.ArgumentParser()
 cli_parse.add_argument("--seed", help="Sets a random seed", default=1)
 cli_parse.add_argument("--data", help="Specifies the name of the data file to use",
                        default='Amherst41.mat')
+cli_parse.add_argument("--eval", dest='learn', action='store_true', help='Specifies if this data will be used for learning or not')
+cli_parse.set_defaults(learn=False)
 args = cli_parse.parse_args()
 
 assert args.seed, "No random seed was provided"
 assert args.data, "No target data was provided"
 
-generate_data(args.seed, args.data)
+generate_data(args.seed, args.data, args.learn)
 # generate_data([0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99])
