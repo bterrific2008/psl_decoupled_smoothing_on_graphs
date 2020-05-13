@@ -1,0 +1,15 @@
+// people who share a same edge are more likely to have the same gender
+1: Edge(A, B) & Gender(A, G) & (A != B) -> Gender(B, G) ^2
+
+// people who share an edge with another person with some gender are likely to prefer that gender
+1: Edge(A, B) & Gender(A, G) & (A != B) -> Preference(B, G) ^2
+1: Edge(A, B) & Preference(A, G) & (A != B) -> Gender(B, G) ^2
+
+// functional constraints
+Gender(P, +G) = 1 .
+Preference(P, +G) = 1 .
+
+// negative priors
+1: !Gender(A, G) ^2
+1: !Preference(A, G) ^2
+
