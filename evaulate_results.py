@@ -110,5 +110,5 @@ ax.set(xlabel='Percent Labeled', ylabel='AUROC',title='AUROC')
 ax.grid()
 
 plt.legend(['one hop', 'two hop', 'decoupled smoothing'], loc='upper left')
-fig.savefig('test.png')
+fig.savefig('eval.png')
 plt.show()

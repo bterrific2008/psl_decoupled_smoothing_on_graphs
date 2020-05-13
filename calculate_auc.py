@@ -3,141 +3,63 @@ from sklearn.metrics import roc_auc_score, average_precision_score
 from matplotlib import pyplot as plt
 import random as rand
 import numpy as np
-
-import csv
-
-predictions = {}
-
-auroc_scores = {}
-categorical_accuracy = {}
-auprc_scores = {}
+import os
 
 debug = False
 
-# models = ['cli_decoupled_smoothing']
-models = ['cli_one_hop', 'cli_two_hop', 'cli_decoupled_smoothing_mod',
-          'cli_decoupled_smoothing_partial', 'cli_decoupled_smoothing_prior']
-pct_list = [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99]
 
-random_seed = [1, 12345, 837, 2841, 4293, 6305, 6746, 9056, 9241, 9547][9]
+def read_predictions(method, data_nm, random_seed, pct_lbl, learn_eval='eval'):
+    # set the working directory and import helper functions
+    # get the current working directory and then redirect into the functions under code
+    cwd = os.getcwd()
 
-output_file = 'results{:04d}.csv'.format(random_seed)
+    # import the results from the results folder
+    results_cwd = os.path.join(os.path.abspath(cwd), 'results', 'decoupled-smoothing', learn_eval)
 
-for model in models:
-    for pct in pct_list:
-        with open('results/decoupled-smoothing/{0}/Amherst41/{1:04d}/inferred'
-                  '-predicates{2:02d}/GENDER.txt'.format(model, random_seed, int(pct * 100)),
-                  'r') as f:
-            for line in f:
-                node, label, prob = line.strip().split('\t')
-                node = int(node)
-                label = int(label)
-                prob = float(prob)
-                if node in predictions:
-                    predictions[node][label] = prob
-                else:
-                    predictions[node] = {label: prob}
-        truth = {}
-        with open('data/Amherst41/{:02d}pct/{:04d}rand/gender_truth.txt'.format(int(pct * 100),
-                                                                            random_seed),
-                  'r') as f:
-            for line in f:
-                node, gender, true = line.strip().split('\t')
-                if float(true) > 0:
-                    node = int(node)
-                    gender = int(gender)
-                    truth[node] = gender
-        y_true = []
-        y_score = []
-
-        tp = []
-        tn = []
-        tp_score = []
-        tn_score = []
-
-        for node in predictions.keys():
-            if node in truth:
-                prob, predict = predictions[node]
-                y_true.append([int(1 == truth[node]), int(2 == truth[node])])
-                y_score.append([predictions[node][1], predictions[node][2]])
-
-                tp.append(int(2 == truth[node]))
-                tp_score.append(predictions[node][2])
-
-                tn.append(int(1 == truth[node]))
-                tn_score.append(predictions[node][1])
-
-        if model in categorical_accuracy:
-            categorical_accuracy[model].append(np.mean(
-                np.equal(np.array(y_true).argmax(axis=-1), np.array(y_score).argmax(axis=-1))))
-        else:
-            categorical_accuracy[model] = [np.mean(
-                np.equal(np.array(y_true).argmax(axis=-1), np.array(y_score).argmax(axis=-1)))]
-
-        calculated_score = roc_auc_score(tp, tp_score, average="weighted")
-        if debug:
-            print('tp {} {} Weighted AUCROC Score'.format(model, pct), calculated_score)
-        if 'tp{}'.format(model) in auroc_scores:
-            auroc_scores['tp{}'.format(model)].append(calculated_score)
-        else:
-            auroc_scores['tp{}'.format(model)] = [calculated_score]
-
-        calculated_score = average_precision_score(tp, tp_score, average="weighted")
-        if debug:
-            print('tp {} {} Weighted AUCPRC Score'.format(model, pct), calculated_score)
-        if 'tp{}'.format(model) in auprc_scores:
-            auprc_scores['tp{}'.format(model)].append(calculated_score)
-        else:
-            auprc_scores['tp{}'.format(model)] = [calculated_score]
-
-        calculated_score = roc_auc_score(tn, tn_score, average="weighted")
-        if debug:
-            print('tn{} {} Weighted AUCROC Score'.format(model, pct), calculated_score)
-        if 'tn{}'.format(model) in auroc_scores:
-            auroc_scores['tn{}'.format(model)].append(calculated_score)
-        else:
-            auroc_scores['tn{}'.format(model)] = [calculated_score]
-
-        calculated_score = average_precision_score(tn, tn_score, average="weighted")
-        if debug:
-            print('tn{} {} Weighted AUCPRC Score'.format(model, pct), calculated_score)
-        if 'tn{}'.format(model) in auprc_scores:
-            auprc_scores['tn{}'.format(model)].append(calculated_score)
-        else:
-            auprc_scores['tn{}'.format(model)] = [calculated_score]
-
-### random
-
-models.append('random')
-for pct in pct_list:
-    with open('data/Amherst41/{:02d}pct/{:04d}rand/gender_test_indicies.txt'
-                      .format(int(pct * 100), random_seed), 'r') as f:
+    predictions = {}
+    file_path = os.path.join(results_cwd, method, data_nm, '{:04d}'.format(random_seed),
+                             'inferred-predicates{:02d}'.format(int(pct_lbl*100)), 'GENDER.txt')
+    with open(file_path, 'r') as f:
         for line in f:
-            node = line.strip().split('\t')[0]
+            node, label, prob = line.strip().split('\t')
             node = int(node)
+            label = int(label)
+            prob = float(prob)
             if node in predictions:
-                choices = [1, 2]
-                rand.shuffle(choices)
-                predictions[node][choices[0]] = 1
-                predictions[node][choices[1]] = 0
+                predictions[node][label] = prob
+            else:
+                predictions[node] = {label: prob}
+    return predictions
+
+
+def read_truth(data_nm, random_seed, pct_lbl, learn_eval='eval'):
+    # set the working directory and import helper functions
+    # get the current working directory and then redirect into the functions under code
+    cwd = os.getcwd()
+
+    # import the results from the results folder
+    data_cwd = os.path.join(os.path.abspath(cwd), 'data', learn_eval, data_nm,
+                               '{:02d}pct'.format(int(pct_lbl*100)), '{:04d}rand'.format(random_seed),
+                               'gender_truth.txt')
+
     truth = {}
-    with open(
-            'data/Amherst41/{:02d}pct/{:04d}rand/gender_truth.txt'.format(int(pct * 100), random_seed),
-            'r') as f:
+    with open(data_cwd, 'r') as f:
         for line in f:
             node, gender, true = line.strip().split('\t')
             if float(true) > 0:
                 node = int(node)
                 gender = int(gender)
                 truth[node] = gender
+    return truth
+
+
+def find_tptn(predictions, truth):
     y_true = []
     y_score = []
-
     tp = []
-    tn = []
     tp_score = []
+    tn = []
     tn_score = []
-
     for node in predictions.keys():
         if node in truth:
             prob, predict = predictions[node]
@@ -149,69 +71,52 @@ for pct in pct_list:
 
             tn.append(int(1 == truth[node]))
             tn_score.append(predictions[node][1])
+    return y_true, y_score, tp, tp_score, tn, tn_score
 
-    model = 'random'
-    if model in categorical_accuracy:
-        categorical_accuracy[model].append(
-            np.mean(np.equal(np.array(y_true).argmax(axis=-1), np.array(y_score).argmax(axis=-1))))
-    else:
-        categorical_accuracy[model] = [
-            np.mean(np.equal(np.array(y_true).argmax(axis=-1), np.array(y_score).argmax(axis=-1)))]
 
-    calculated_score = roc_auc_score(tp, tp_score, average="weighted")
-    if debug:
-        print('tp {} {} Weighted AUCROC Score'.format(model, pct), calculated_score)
-    if 'tp{}'.format(model) in auroc_scores:
-        auroc_scores['tp{}'.format(model)].append(calculated_score)
-    else:
-        auroc_scores['tp{}'.format(model)] = [calculated_score]
+def calculate_metrics(truth, score):
+    roc_score = roc_auc_score(truth, score, average="weighted")
+    prc_score = average_precision_score(truth, score, average="weighted")
+    return roc_score, prc_score
 
-    calculated_score = average_precision_score(tp, tp_score, average="weighted")
-    if debug:
-        print('tp {} {} Weighted AUCPRC Score'.format(model, pct), calculated_score)
-    if 'tp{}'.format(model) in auprc_scores:
-        auprc_scores['tp{}'.format(model)].append(calculated_score)
-    else:
-        auprc_scores['tp{}'.format(model)] = [calculated_score]
+def main():
+    # models = ['cli_decoupled_smoothing']
+    models = ['cli_one_hop', 'cli_decoupled_smoothing_mod',
+              'cli_decoupled_smoothing_prior', 'cli_decoupled_smoothing_partial']
+    models = ['cli_two_hop']
+    pct_list = [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95]
 
-    calculated_score = roc_auc_score(tp, tp_score, average="weighted")
-    if debug:
-        print('tn {} {} Weighted AUCROC Score'.format(model, pct), calculated_score)
-    if 'tn{}'.format(model) in auroc_scores:
-        auroc_scores['tn{}'.format(model)].append(calculated_score)
-    else:
-        auroc_scores['tn{}'.format(model)] = [calculated_score]
+    random_seeds = [1, 12345, 837, 2841, 4293, 6305, 6746, 9056, 9241, 9547]
+    results = {}
 
-    calculated_score = average_precision_score(tp, tp_score, average="weighted")
-    if debug:
-        print('tn {} {} Weighted AUCPRC Score'.format(model, pct), calculated_score)
-    if 'tn{}'.format(model) in auprc_scores:
-        auprc_scores['tn{}'.format(model)].append(calculated_score)
-    else:
-        auprc_scores['tn{}'.format(model)] = [calculated_score]
+    for pct in pct_list:
+        results['{:02d}pct'.format(int(pct*100))] = {}
+        for model in models:
+            results['{:02d}pct'.format(int(pct*100))][model] = {}
+            for seed in random_seeds:
+                print('model', model, 'pct', pct, 'random', seed)
+                predictions = read_predictions(model, 'Amherst41', seed, pct)
+                truth = read_truth('Amherst41', seed, pct)
+                y_true, y_score, tp, tp_score, tn, tn_score = find_tptn(predictions, truth)
 
-# fig, ax = plt.subplots()
-# for model in auroc_scores.keys():
-#     ax.plot(pct_list, auroc_scores[model])
-# ax.set(xlabel='Percent Labeled', ylabel='AUROC', title='AUROC')
-# ax.grid()
-# plt.legend(auroc_scores.keys(), loc='upper left')
-# fig.savefig('results.png')
-# plt.show()
+                roc_score, prc_score = calculate_metrics(tp, tp_score)
+                results['{:02d}pct'.format(int(100 * pct))][model][seed] = {}
+                results['{:02d}pct'.format(int(100*pct))][model][seed]['tp_roc'] = roc_score
+                results['{:02d}pct'.format(int(100 * pct))][model][seed]['tp_prc'] = prc_score
 
-with open(output_file, mode='w+') as f:
+                roc_score, prc_score = calculate_metrics(tn, tn_score)
+                results['{:02d}pct'.format(int(100 * pct))][model][seed]['tn_roc'] = roc_score
+                results['{:02d}pct'.format(int(100 * pct))][model][seed]['tn_prc'] = prc_score
 
-    string_pct = ",".join(["{:02}%".format(int(i * 100)) for i in pct_list])
-    f.write('Model{},{}\n'.format(random_seed, string_pct))
+                results['{:02d}pct'.format(int(100 * pct))][model][seed]['cat'] = np.mean(
+                    np.equal(np.array(y_true).argmax(axis=-1), np.array(y_score).argmax(axis=-1)))
 
-    f.write('AUROC\n')
-    for key in auroc_scores.keys():
-        f.write("{},{}\n".format(key, ",".join([str(i) for i in auroc_scores[key]])))
+    # prc_file = "prc.csv"
+    # roc_file = "roc.csv"
+    # cat_file = "cat.csv"
+    # with open(prc_file, 'w+') as f_prc, open(roc_file, 'w+') as f_roc, open(cat_file, 'w+') as f_cat:
 
-    f.write('AUPRC\n')
-    for key in auprc_scores.keys():
-        f.write("{},{}\n".format(key, ",".join([str(i) for i in auprc_scores[key]])))
 
-    f.write('Categorical Accuracy\n')
-    for key in categorical_accuracy.keys():
-        f.write("{},{}\n".format(key, ",".join([str(i) for i in categorical_accuracy[key]])))
+    print(results)
+
+main()

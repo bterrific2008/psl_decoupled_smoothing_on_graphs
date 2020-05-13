@@ -16,6 +16,7 @@ function run_psl() {
     local data_nm=$4
     local rand_sd=$5
     local pct_lbl=$6
+    local learn_eval=$7
 
     mkdir -p "${outDir}"
 
@@ -28,21 +29,40 @@ function run_psl() {
         return 0
     fi
 
-    pushd . > /dev/null
-        cd "${cliDir}"
+    if [ $learn_eval == 'learn' ]; then
+      pushd . > /dev/null
+          cd "${cliDir}"
 
-        # fix the data settings
-        sed "s/rand_sd/${rand_sd}rand/g ; s/pct_lbl/${pct_lbl}pct/g ; s/data_nm/${data_nm}/g" \
-        base.data > gender.data
+          # fix the data settings
+          sed "s/learn_eval/learn/g ; s/rand_sd/${rand_sd}rand/g ; s/pct_lbl/${pct_lbl}pct/g ; s/data_nm/${data_nm}/g" \
+          base.data > gender-learn.data
 
-        # Run PSL.
-        /usr/bin/time -v --output="${timePath}" ./run.sh ${extraOptions} > "${outPath}" 2> "${errPath}"
+          # Run PSL.
+          /usr/bin/time -v --output="${timePath}" ./run-learn.sh ${extraOptions} > "${outPath}" 2> "${errPath}"
 
-        # Copy any artifacts into the output directory.
-        cp -R inferred-predicates "${outDir}/inferred-predicates${pct_lbl}"
-        cp *.data "${outDir}/"
-        cp *.psl "${outDir}/"
-    popd > /dev/null
+          # Copy any artifacts into the output directory.
+          cp -R inferred-predicates "${outDir}/inferred-predicates${pct_lbl}"
+          cp *.data "${outDir}/"
+          cp *.psl "${outDir}/"
+      popd > /dev/null
+    elif [ $learn_eval == 'eval' ]; then
+      pushd . > /dev/null
+          cd "${cliDir}"
+
+          # fix the data settings
+          sed "s/learn_eval/learn/g ; s/rand_sd/${rand_sd}rand/g ; s/pct_lbl/${pct_lbl}pct/g ; s/data_nm/${data_nm}/g" \
+          base.data > gender-eval.data
+
+          # Run PSL.
+          /usr/bin/time -v --output="${timePath}" ./run-eval.sh ${extraOptions} > "${outPath}" 2> "${errPath}"
+
+          # Copy any artifacts into the output directory.
+          cp -R inferred-predicates "${outDir}/inferred-predicates${pct_lbl}"
+          cp *.data "${outDir}/"
+          cp *.psl "${outDir}/"
+      popd > /dev/null
+    fi
+
 }
 
 function run_method() {
@@ -50,21 +70,22 @@ function run_method() {
     local data_nm=$2
     local rand_sd=$3
     local pct_lbl=$4
+    local learn_eval=$5
 
 
     local exampleName=`basename "${exampleDir}"`
     local cliDir="$exampleDir"
-    local outDir="${BASE_OUT_DIR}/${RUN_ID}/${exampleName}/${data_nm}/${rand_sd}"
+    local outDir="${BASE_OUT_DIR}/${RUN_ID}/${learn_eval}/${exampleName}/${data_nm}/${rand_sd}"
     local options="${ADDITIONAL_PSL_OPTIONS}"
 
     echo "Running ${exampleName} -- ${RUN_ID}."
 
-    run_psl "${cliDir}" "${outDir}" "${options}" "${data_nm}" "${rand_sd}" "${pct_lbl}"
+    run_psl "${cliDir}" "${outDir}" "${options}" "${data_nm}" "${rand_sd}" "${pct_lbl}" "${learn_eval}"
 }
 
 function main() {
     if [[ $# -eq 0 ]]; then
-        echo "USAGE: $0 <data> <random seed> <percent labeled> <example dir> ..."
+        echo "USAGE: $0 <data> <random seed> <percent labeled> <train or test> <example dir> ..."
         exit 1
     fi
 
@@ -78,12 +99,15 @@ function main() {
     local pct_lbl=$1
     shift
 
+    local learn_eval=$1
+    shift
+
     trap exit SIGINT
 
-    echo "data used: ${data_nm} | random seed: ${rand_sd} | percent labeled:${pct_lbl}"
+    echo "data used: ${data_nm} | random seed: ${rand_sd} | percent labeled:${pct_lbl} | train test: ${learn_eval}"
 
     for exampleDir in "$@"; do
-        run_method "${exampleDir}" "${data_nm}" "${rand_sd}" "${pct_lbl}" "${i}"
+        run_method "${exampleDir}" "${data_nm}" "${rand_sd}" "${pct_lbl}" "${learn_eval}" "${i}"
     done
 }
 

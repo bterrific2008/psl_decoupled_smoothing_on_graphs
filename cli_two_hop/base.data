@@ -3,11 +3,11 @@ predicates:
    Gender/2: open
 
 observations:
-   Edge: ../data/data_nm/pct_lbl/rand_sd/edges_obs.txt
-   Gender: ../data/data_nm/pct_lbl/rand_sd/gender_obs.txt
+   Edge: ../data/train_test/data_nm/pct_lbl/rand_sd/edges_obs.txt
+   Gender: ../data/train_test/data_nm/pct_lbl/rand_sd/gender_obs.txt
 
 targets:
-    Gender: ../data/data_nm/pct_lbl/rand_sd/gender_targets.txt
+    Gender: ../data/train_test/data_nm/pct_lbl/rand_sd/gender_targets.txt
 
 truth:
-    Gender: ../data/data_nm/pct_lbl/rand_sd/gender_truth.txt
+    Gender: ../data/train_test/data_nm/pct_lbl/rand_sd/gender_truth.txt

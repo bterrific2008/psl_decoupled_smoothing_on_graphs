@@ -11,18 +11,21 @@ readonly RUN_ID='run-all-decoupled-smoothing'
 function generate_data() {
   random_seed=$1
   data_name=$2
+  train_test=$3
 
-  echo "Generating data with seed ${random_seed} and data ${data_name}"
+  echo "Generating data with seed ${random_seed} and data ${data_name} for ${train_test}"
 
   printf -v seed_nm "%04d" $random_seed
-  local logPath="${BASE_DATA_DIR}/${data_name}/01pct/${seed_nm}rand/data_log.json"
+  local logPath="${BASE_DATA_DIR}/${train_test}/${data_name}/01pct/${seed_nm}rand/data_log.json"
 
   echo "${logPath}"
 
   if [[ -e "${logPath}" ]]; then
     echo "Output data already exists, skipping data generation"
+  elif [ "$train_test" = learn ]; then
+    python3 write_psl_data.py --seed ${random_seed} --data ${data_name}.mat --learn
   else
-    python3 write_psl_data.py  --seed ${random_seed} --data ${data_name}.mat
+    python3 write_psl_data.py --seed ${random_seed} --data ${data_name}.mat
   fi
 }
 
@@ -39,18 +42,26 @@ function main() {
   trap exit SIGINT
 
   if [ $method == "all" ]; then
-    for rand_sd in 837 2841 4293 6305 6746 9056 9241 9547; do
-      generate_data "${rand_sd}" "${data_name}"
+    # learn the data
+    generate_data 4212 "${data_name}" "learn"
+
+    # for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
+    #   ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "learn" "cli_one_hop/"
+    # done
+
+    # eval the data
+    for rand_sd in 1 12345 837 2841 4293 6305 6746 9056 9241 9547; do
+      generate_data "${rand_sd}" "${data_name}" "eval"
 
       echo "Running ${method} for all percentages"
       for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
-        ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "cli_one_hop/"
-        ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "cli_two_hop/"
-        ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "cli_decoupled_smoothing_mod/"
-        ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "cli_decoupled_smoothing_prior/"
-        ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "cli_decoupled_smoothing_partial/"
+        for sub_method in cli_one_hop/ cli_two_hop/ cli_decoupled_smoothing_mod/ cli_decoupled_smoothing_prior/ cli_decoupled_smoothing_partial/; do
+          echo "Running ${sub_method} for ${pct_lbl} with data ${data_name} random seed ${rand_sd} for evaluation"
+          ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "eval" "${sub_method}"
+        done
       done
     done
+
     return 0
   else
     generate_data "${random_seed}" "${data_name}"
