@@ -41,34 +41,21 @@ function main() {
 
   trap exit SIGINT
 
+  # running all methods for all seeds
   if [ $method == "all" ]; then
-    # learn the data
-    generate_data 4212 "${data_name}" "learn"
+    for rand_sd in 837 2841 4293 6305 6746 9056 9241 9547; do
+      # generate data for the random seed
+      generate_data "${rand_sd}" "${data_name}"
 
-    # for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
-    #   ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "learn" "cli_one_hop/"
-    # done
-
-    for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
-      for sub_method in cli_one_hop/ cli_two_hop/ cli_decoupled_smoothing_mod/ cli_decoupled_smoothing_prior/ cli_decoupled_smoothing_partial/; do
-        echo "Running ${sub_method} for ${pct_lbl} with data ${data_name} random seed ${rand_sd} for learning"
-        # ./run_method.sh "${data_name}" 4212 "${pct_lbl}" "learn" "${sub_method}"
-      done
-    done
-
-    # eval the data
-    for rand_sd in 1 12345 837 2841 4293 6305 6746 9056 9241 9547; do
-      generate_data "${rand_sd}" "${data_name}" "eval"
-
+      # find all the results for each percentage
       echo "Running ${method} for all percentages"
       for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
         for sub_method in cli_one_hop/ cli_two_hop/ cli_decoupled_smoothing_mod/ cli_decoupled_smoothing_prior/ cli_decoupled_smoothing_partial/; do
           echo "Running ${sub_method} for ${pct_lbl} with data ${data_name} random seed ${rand_sd} for evaluation"
-          # ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "eval" "${sub_method}"
+          ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "eval" "${sub_method}"
         done
       done
     done
-
     return 0
   else
     generate_data "${random_seed}" "${data_name}"
