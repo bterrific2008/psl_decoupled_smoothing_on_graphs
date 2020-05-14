@@ -27,6 +27,7 @@ function generate_data() {
 }
 
 function main() {
+  # help text
   if [[ $# -eq 0 ]]; then
     echo "USAGE: $0 <method cli_dir> <data name> <random seed> ..."
     exit 1
@@ -38,10 +39,13 @@ function main() {
 
   trap exit SIGINT
 
+  # running all methods for all seeds
   if [ $method == "all" ]; then
     for rand_sd in 837 2841 4293 6305 6746 9056 9241 9547; do
+      # generate data for the random seed
       generate_data "${rand_sd}" "${data_name}"
 
+      # find all the results for each percentage
       echo "Running ${method} for all percentages"
       for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
         ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "cli_one_hop/"
@@ -52,6 +56,7 @@ function main() {
       done
     done
     return 0
+  # running all percentages for one random seed and one model
   else
     generate_data "${random_seed}" "${data_name}"
 
