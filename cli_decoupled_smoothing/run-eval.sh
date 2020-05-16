@@ -2,7 +2,7 @@
 
 # Options can also be passed on the command line.
 # These options are blind-passed to the CLI.
-# Ex: ./run.sh -D log4j.threshold=DEBUG
+# Ex: ./run-learn.sh -D log4j.threshold=DEBUG
 
 readonly PSL_VERSION='CANARY-2.3.0'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
@@ -19,17 +19,17 @@ function main() {
   fetch_psl
 
   # Run PSL
-  run_evaluation "$@"
+  runEvaluation "$@"
 }
 
-function run_evaluation() {
-  echo "Running PSL Inference"
+function runEvaluation() {
+   echo "Running PSL Inference"
 
-  java -jar "${JAR_PATH}" --model "${BASE_NAME}.psl" --data "${BASE_NAME}.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
-  if [[ "$?" -ne 0 ]]; then
-    echo 'ERROR: Failed to run infernce'
-    exit 70
-  fi
+   java -jar "${JAR_PATH}" --model "${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+   if [[ "$?" -ne 0 ]]; then
+      echo 'ERROR: Failed to run infernce'
+      exit 70
+   fi
 }
 
 function check_requirements() {
