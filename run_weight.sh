@@ -56,12 +56,9 @@ function main() {
           generate_data "${rand_sd}" "${data_name}" "eval"
           ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "eval" "${sub_method}"
         done
-
       done
     done
-
     return 0
-
   else
     generate_data "${random_seed}" "${data_name}"
 
