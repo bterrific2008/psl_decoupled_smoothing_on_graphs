@@ -6,7 +6,7 @@ readonly THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly BASE_DATA_DIR="${THIS_DIR}/data"
 
 # An identifier to differentiate the output of this script/experiment from other scripts.
-readonly RUN_ID='run-all-decoupled-smoothing'
+readonly RUN_ID='run-all-weight-decoupled-smoothing'
 
 function generate_data() {
   random_seed=$1
@@ -42,21 +42,18 @@ function main() {
   trap exit SIGINT
 
   if [ $method == "all" ]; then
-    # learn the data
+    # learn the learn data
     generate_data 4212 "${data_name}" "learn"
 
-    # for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
-    #   ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "learn" "cli_one_hop/"
-    # done
-
     # eval the data
-    for rand_sd in 1 12345 837 2841 4293 6305 6746 9056 9241 9547; do
-      generate_data "${rand_sd}" "${data_name}" "eval"
+    for pct_lbl in 80; do
+      for sub_method in cli_one_hop/ cli_two_hop/ cli_decoupled_smoothing_mod/ cli_decoupled_smoothing_prior/ cli_decoupled_smoothing_partial/; do
+        echo "learn: Random 4212 | PCT ${pct_lbl} | method ${sub_method}"
+        ./run_method.sh "${data_name}" "4212" "${pct_lbl}" "learn" "${sub_method}"
 
-      echo "Running ${method} for all percentages"
-      for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
-        for sub_method in cli_one_hop/ cli_two_hop/ cli_decoupled_smoothing_mod/ cli_decoupled_smoothing_prior/ cli_decoupled_smoothing_partial/; do
-          echo "Running ${sub_method} for ${pct_lbl} with data ${data_name} random seed ${rand_sd} for evaluation"
+        for rand_sd in 1 12345 837 2841 4293 6305 6746 9056 9241 9547; do
+          echo "eval: Random ${rand_sd} | PCT ${pct_lbl} | method ${sub_method}"
+          generate_data "${rand_sd}" "${data_name}" "eval"
           ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "eval" "${sub_method}"
         done
       done

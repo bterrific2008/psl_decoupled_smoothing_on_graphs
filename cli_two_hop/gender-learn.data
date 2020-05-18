@@ -1,0 +1,13 @@
+predicates:
+   Edge/2: closed
+   Gender/2: open
+
+observations:
+   Edge: ../data/learn/Amherst41/80pct/4212rand/edges_obs.txt
+   Gender: ../data/learn/Amherst41/80pct/4212rand/gender_obs.txt
+
+targets:
+    Gender: ../data/learn/Amherst41/80pct/4212rand/gender_targets.txt
+
+truth:
+    Gender: ../data/learn/Amherst41/80pct/4212rand/gender_truth.txt
