@@ -87,8 +87,9 @@ def calculate_metrics(truth, score):
 
 
 def main():
-    models = ['cli_one_hop', 'cli_decoupled_smoothing_mod',
-              'cli_decoupled_smoothing_prior', 'cli_decoupled_smoothing_partial']
+    # models = ['cli_one_hop', 'cli_decoupled_smoothing_mod',
+    #           'cli_decoupled_smoothing_prior', 'cli_decoupled_smoothing_partial']
+    models = ['cli_combo']
     pct_list = [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95]
     random_seeds = [1, 12345, 837, 2841, 4293, 6305, 6746, 9056, 9241, 9547]
 

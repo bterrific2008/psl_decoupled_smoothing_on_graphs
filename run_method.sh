@@ -50,7 +50,7 @@ function run_psl() {
           cd "${cliDir}"
 
           # fix the data settings
-          sed "s/learn_eval/learn/g ; s/rand_sd/${rand_sd}rand/g ; s/pct_lbl/${pct_lbl}pct/g ; s/data_nm/${data_nm}/g" \
+          sed "s/learn_eval/eval/g ; s/rand_sd/${rand_sd}rand/g ; s/pct_lbl/${pct_lbl}pct/g ; s/data_nm/${data_nm}/g" \
           base.data > gender-eval.data
 
           # Run PSL.
