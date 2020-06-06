@@ -2,8 +2,8 @@
 1: Edge(A, B) & Gender(A, G) & (A != B) -> Preference(B, G) ^2
 1: Edge(A, B) & Preference(A, G) & (A != B) -> Gender(B, G) ^2
 
-// People are more likely to be friends who share their preferences
-1: Edge(A, B) & Preference(A, G) & (A != B) -> Preference(B, G) ^ 2
+// People are more likely to be friends who have friends that share the same preferences
+1: Edge(A, B) & Edge(B, C) & Preference(A, G) & (A != B) & (B != C) & (A != C) -> Preference(C, G) ^2
 
 // functional constraint
 Gender(P, +G) = 1 .
