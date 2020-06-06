@@ -47,7 +47,7 @@ function main() {
 
     # eval the data
     for pct_lbl in 80; do
-      for sub_method in cli_one_hop/ cli_two_hop/ cli_decoupled_smoothing_mod/ cli_decoupled_smoothing_prior/ cli_decoupled_smoothing_partial/; do
+      for sub_method in cli_decoupled_smoothing_pref_homophily/; do
         echo "learn: Random 4212 | PCT ${pct_lbl} | method ${sub_method}"
         ./run_method.sh "${data_name}" "4212" "${pct_lbl}" "learn" "${sub_method}"
 
