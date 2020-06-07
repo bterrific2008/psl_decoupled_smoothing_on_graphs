@@ -1,0 +1,17 @@
+predicates:
+   Edge/2: closed
+   ClusterCoeff/1: closed
+   Preference/2: open
+   Gender/2: open
+
+observations:
+   Edge: ../data/learn/Amherst41/99pct/4212rand/edges_obs.txt
+   ClusterCoeff: ../data/cluster_coefficient_list.txt
+   Gender: ../data/learn/Amherst41/99pct/4212rand/gender_obs.txt
+
+targets:
+    Preference: ../data/learn/Amherst41/99pct/4212rand/preferences_targets.txt
+    Gender: ../data/learn/Amherst41/99pct/4212rand/gender_targets.txt
+
+truth:
+    Gender: ../data/learn/Amherst41/99pct/4212rand/gender_truth.txt
