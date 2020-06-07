@@ -6,7 +6,7 @@ predicates:
 
 observations:
    Edge: ../data/eval/Amherst41/99pct/9547rand/edges_obs.txt
-   FriendCount: ../data/degree_list.txt
+   FriendCount: ../data/normalized_degree_list.txt
    Gender: ../data/eval/Amherst41/99pct/9547rand/gender_obs.txt
 
 targets:

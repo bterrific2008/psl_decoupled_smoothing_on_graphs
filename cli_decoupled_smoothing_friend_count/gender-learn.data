@@ -1,10 +1,12 @@
 predicates:
    Edge/2: closed
+   FriendCount/1: closed
    Preference/2: open
    Gender/2: open
 
 observations:
    Edge: ../data/learn/Amherst41/99pct/4212rand/edges_obs.txt
+   FriendCount: ../data/normalized_degree_list.txt
    Gender: ../data/learn/Amherst41/99pct/4212rand/gender_obs.txt
 
 targets:
