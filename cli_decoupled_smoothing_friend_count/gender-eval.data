@@ -1,0 +1,17 @@
+predicates:
+   Edge/2: closed
+   FriendCount/1: closed
+   Preference/2: open
+   Gender/2: open
+
+observations:
+   Edge: ../data/eval/Amherst41/99pct/9547rand/edges_obs.txt
+   FriendCount: ../data/degree_list.txt
+   Gender: ../data/eval/Amherst41/99pct/9547rand/gender_obs.txt
+
+targets:
+    Preference: ../data/eval/Amherst41/99pct/9547rand/preferences_targets.txt
+    Gender: ../data/eval/Amherst41/99pct/9547rand/gender_targets.txt
+
+truth:
+    Gender: ../data/eval/Amherst41/99pct/9547rand/gender_truth.txt
