@@ -1,6 +1,6 @@
 predicates:
    Edge/2: closed
-   CloserFriend/1: closed
+   CloserFriend/2: closed
    Preference/2: open
    Gender/2: open
 
