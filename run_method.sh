@@ -20,9 +20,9 @@ function run_psl() {
 
     mkdir -p "${outDir}"
 
-    local outPath="${outDir}/out${pct_lbl}.txt"
-    local errPath="${outDir}/out${pct_lbl}.err"
-    local timePath="${outDir}/time${pct_lbl}.txt"
+    local outPath="${outDir}/out${pct_lbl}${learn_eval}.txt"
+    local errPath="${outDir}/out${pct_lbl}${learn_eval}.err"
+    local timePath="${outDir}/time${pct_lbl}${learn_eval}.txt"
 
     if [[ -e "${outPath}" ]]; then
         echo "Output file already exists, skipping: ${outPath}"
