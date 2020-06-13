@@ -63,13 +63,13 @@ function main() {
     generate_data 4212 "${data_name}" "learn"
 
     echo "Running ${method} for all percentages"
-    for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
+    for pct_lbl in 01 20 50 80 95; do
       echo "learn: Random 4212 | PCT ${pct_lbl} | method ${method}"
       ./run_method.sh "${data_name}" "4212" "${pct_lbl}" "learn" "${method}"
 
       for rand_sd in 1 12345 837 2841 4293 6305 6746 9056 9241 9547; do
         echo "eval: Random ${rand_sd} | PCT ${pct_lbl} | method ${method}"
-        generate_data "${random_seed}" "${data_name}"
+        generate_data "${rand_seed}" "${data_name}" "eval"
         ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "eval" "${method}"
       done
     done
