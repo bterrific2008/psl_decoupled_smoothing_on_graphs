@@ -2,7 +2,7 @@
 1: Edge(A, B) & Gender(A, G) & Gender(A, G) & (A != B) -> Preference(B, "1") ^2
 
 // People who don't share the same identity with a neighbor are more likely to not prefer to share the same identity ("0") as their neighbors
-1: Edge(A, B) & Gender(A, G1) & Gender(A, G2) & (A != B) & (G1 != G2) -> Gender(A, "0") ^2
+1: Edge(A, B) & Gender(A, G1) & Gender(A, G2) & (A != B) & (G1 != G2) -> Preference(A, "0") ^2
 
 // People who are more likely to prefer to share the same identity ("1") will share the same gender as their neighbor
 1: Edge(A, B) & Gender(B, G) & Preference(A, "1") -> Gender(A, G)
