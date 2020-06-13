@@ -1,14 +1,14 @@
-// People who share the same identity with a neighbor are more likely to prefer to share the same identity ("1") as their neighbors
-1: Edge(A, B) & Gender(A, G) & Gender(A, G) & (A != B) -> Preference(B, "1") ^2
+// People who share the same identity with a neighbor are more likely to prefer to share the same identity ("2") as their neighbors
+1: Edge(A, B) & Gender(A, G) & Gender(A, G) & (A != B) -> Preference(B, "2") ^2
 
-// People who don't share the same identity with a neighbor are more likely to not prefer to share the same identity ("0") as their neighbors
-1: Edge(A, B) & Gender(A, G1) & Gender(A, G2) & (A != B) & (G1 != G2) -> Preference(A, "0") ^2
+// People who don't share the same identity with a neighbor are more likely to not prefer to share the same identity ("1") as their neighbors
+1: Edge(A, B) & Gender(A, G1) & Gender(A, G2) & (A != B) & (G1 != G2) -> Preference(A, "1") ^2
+
+// People who are more likely to prefer to share the same identity ("2") will share the same gender as their neighbor
+1: Edge(A, B) & Gender(B, G) & Preference(A, "2") -> Gender(A, G)
 
 // People who are more likely to prefer to share the same identity ("1") will share the same gender as their neighbor
-1: Edge(A, B) & Gender(B, G) & Preference(A, "1") -> Gender(A, G)
-
-// People who are more likely to prefer to share the same identity ("0") will share the same gender as their neighbor
-1: Edge(A, B) & Gender(B, G) & Preference(A, "0") -> !Gender(A, G)
+1: Edge(A, B) & Gender(B, G) & Preference(A, "1") -> !Gender(A, G)
 
 // functional constraint
 Gender(P, +G) = 1 .
