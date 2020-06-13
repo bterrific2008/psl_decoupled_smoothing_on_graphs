@@ -31,13 +31,12 @@ function generate_data() {
 
 function main() {
   if [[ $# -eq 0 ]]; then
-    echo "USAGE: $0 <method cli_dir> <data name> <random seed> ..."
+    echo "USAGE: $0 <method cli_dir> <data name>  ..."
     exit 1
   fi
 
   method=$1
   data_name=$2
-  random_seed=$3
 
   trap exit SIGINT
 
@@ -46,7 +45,7 @@ function main() {
     generate_data 4212 "${data_name}" "learn"
 
     # eval the data
-    for pct_lbl in 80; do
+    for pct_lbl in 01 10 30 50 80; do
       for sub_method in cli_decoupled_smoothing_pref_homophily/; do
         echo "learn: Random 4212 | PCT ${pct_lbl} | method ${sub_method}"
         ./run_method.sh "${data_name}" "4212" "${pct_lbl}" "learn" "${sub_method}"
@@ -61,11 +60,18 @@ function main() {
 
     return 0
   else
-    generate_data "${random_seed}" "${data_name}"
+    generate_data 4212 "${data_name}" "learn"
 
     echo "Running ${method} for all percentages"
     for pct_lbl in 01 05 10 20 30 40 50 60 70 80 90 95 99; do
-      ./run_method.sh "${data_name}" "${random_seed}" "${pct_lbl}" "${method}"
+      echo "learn: Random 4212 | PCT ${pct_lbl} | method ${method}"
+      ./run_method.sh "${data_name}" "4212" "${pct_lbl}" "learn" "${method}"
+
+      for rand_sd in 1 12345 837 2841 4293 6305 6746 9056 9241 9547; do
+        echo "eval: Random ${rand_sd} | PCT ${pct_lbl} | method ${method}"
+        generate_data "${random_seed}" "${data_name}"
+        ./run_method.sh "${data_name}" "${rand_sd}" "${pct_lbl}" "eval" "${method}"
+      done
     done
   fi
 }
