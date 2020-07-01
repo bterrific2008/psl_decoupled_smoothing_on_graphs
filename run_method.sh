@@ -11,6 +11,11 @@ readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval CategoricalEvaluator RankingEva
 # An identifier to differentiate the output of this script/experiment from other scripts.
 readonly RUN_ID='decoupled-smoothing'
 
+function display_help() {
+  echo "USAGE: $0 <data> <random seed> <percent labeled> {learn|eval} <method dir> ..."
+  exit 1
+}
+
 function generate_data() {
   random_seed=$1
   data_name=$2
@@ -99,15 +104,15 @@ function run_method() {
 
   local options=""
   case $learn_eval in
-    learn)
-      options = "${ADDITIONAL_LEARN_OPTIONS} ${ADDITIONAL_PSL_OPTIONS}"
-      ;;
-    eval)
-      options = "${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS}"
-      ;;
-    *)
-      options="${ADDITIONAL_PSL_OPTIONS}"
-      ;;
+  learn)
+    options = "${ADDITIONAL_LEARN_OPTIONS} ${ADDITIONAL_PSL_OPTIONS}"
+    ;;
+  eval)
+    options = "${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS}"
+    ;;
+  *)
+    options="${ADDITIONAL_PSL_OPTIONS}"
+    ;;
   esac
 
   echo "Running ${exampleName} -- ${RUN_ID}."
@@ -116,9 +121,14 @@ function run_method() {
 }
 
 function main() {
+
   if [[ $# -eq 0 ]]; then
-    echo "USAGE: $0 <data> <random seed> <percent labeled> <train or test> <example dir> ..."
+    echo "USAGE: $0 <data> <random seed> <percent labeled> {learn|eval} <method dir> ..."
     exit 1
+  fi
+
+  if [ "$1" == "-h" ]; then
+    display_help
   fi
 
   local data_nm=$1
@@ -137,9 +147,10 @@ function main() {
   trap exit SIGINT
 
   echo "data used: ${data_nm} | random seed: ${rand_sd} | percent labeled:${pct_lbl} | train test: ${learn_eval}"
+  generate_data "${rand_sd}" "${data_nm}" "${learn_eval}"
 
-  generate_data "${rand_sd}" "${data_name}" "eval"
   for exampleDir in "$@"; do
+    echo "running: ${exampleDir}"
     run_method "${exampleDir}" "${data_nm}" "${rand_sd}" "${pct_lbl}" "${learn_eval}" "${i}"
   done
 }
