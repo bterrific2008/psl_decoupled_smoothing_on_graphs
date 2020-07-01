@@ -4,7 +4,6 @@ import os
 import random
 import json
 import networkx as nx
-import snowballsampling as snow
 from pathlib import Path
 
 import parsing as parse_mat
@@ -25,7 +24,7 @@ def generate_data(random_seed=1, school_data='Amherst41.mat', learn=False):
     random.seed(random_seed)
 
     # parse the data
-    adj_matrix, gender_y = parse_data(school_data, learn)
+    adj_matrix, gender_y = parse_data(school_data)
 
     # write the data
     for pct_label in [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99]:
@@ -38,7 +37,7 @@ def generate_data(random_seed=1, school_data='Amherst41.mat', learn=False):
                     school_data, learn)
 
 
-def parse_data(school_data='Amherst41.mat', learn=False):
+def parse_data(school_data='Amherst41.mat'):
     """
     Converts the mat file
 
@@ -72,28 +71,6 @@ def parse_data(school_data='Amherst41.mat', learn=False):
                                                    'yes')
 
     adj_matrix = nx.adjacency_matrix(graph).todense().tolist()
-
-    if learn:
-        initial_participant = snow.randomseed(graph)
-        sample_participants = snow.snowballsampling(graph, initial_participant,
-                                                    maxsize=len(graph.nodes) * .5)
-
-        assert nx.is_connected(graph.subgraph(sample_participants))
-        assert len(sample_participants) == len(graph.nodes) * .5
-        assert type(sample_participants) is set
-
-        """sample_population = [random.choice(list(graph.nodes()))]
-        index = 0
-    
-        while len(sample_population) < len(graph.nodes) * .5:
-            participant = sample_population[index]
-            for neighbor in graph.neighbors(participant):
-                if neighbor not in sample_population:
-                    sample_population.append(neighbor)
-                    if len(sample_population) >= len(graph.nodes) * .5:
-                        break
-            index += 1
-            len(sample_population)"""
 
     # change A(scipy csc matrix) into a numpy matrix
     # adj_matrix = A.todense().tolist()
